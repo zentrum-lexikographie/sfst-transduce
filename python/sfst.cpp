@@ -4,80 +4,57 @@
 #include <sstream>
 
 #include "../src/fst.h"
+#include "../src/compact.h"
 
-#define STRINGIFY(x) #x
-#define MACRO_STRINGIFY(x) STRINGIFY(x)
-
+using namespace std;
 using namespace SFST;
 
-const int GENERATE_MODE = 1;
-const int ANALYSE_MODE = 2;
+class CustomCompactTransducer : public SFST::CompactTransducer
+{
+  public:
+    CustomCompactTransducer(FILE* f);
+    static unique_ptr<CustomCompactTransducer> create(char* filename);
+    vector<string> analyse(char *input);
+};
 
-Transducer *transducer;
-
-/**
- * Initialize transducer.
- */
-void init(char *transducer_filename) {
-  if (transducer_filename == NULL) {
-    printf("Please provide transducer file");
-    exit(1);
-  }
-  FILE *transducer_file;
-  transducer_file = fopen(transducer_filename, "rb");
-  if (transducer_file != NULL) {
-    transducer = new Transducer(transducer_file);
-    fclose(transducer_file);
-  } else {
-    perror("Could not read transducer file");
-    exit(1);
-  }
+CustomCompactTransducer::CustomCompactTransducer(FILE* f)
+  : SFST::CompactTransducer(f)
+{
 }
 
-/*
- * Destroys the transducer object.
- * args: None
- */
-void delete_transducer() { delete transducer; }
-
-const vector<std::string> analyse(char *input) {
-  return transducer->analyze_string(input, true);
+unique_ptr<CustomCompactTransducer> CustomCompactTransducer::create(char* filename)
+{
+    FILE* f = fopen(filename, "rb");
+    if (f != NULL)
+    {
+      auto transducer = unique_ptr<CustomCompactTransducer>(new CustomCompactTransducer(f));
+      fclose(f);
+      return transducer;
+    }
+    return unique_ptr<CustomCompactTransducer>(nullptr);
 }
 
-const vector<std::string> generate(char *input) {
-  return transducer->generate_string(input, true);
+vector<string> CustomCompactTransducer::analyse(char *input)
+{
+  vector<CAnalysis> analyses;
+  analyze_string(input, analyses);
+
+  vector<string> printed_analyses;
+  for (auto& analysis : analyses)
+  {
+    string printed_analysis = print_analysis(analysis);
+    printed_analyses.push_back(printed_analysis);
+  }
+  return printed_analyses;
 }
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(sfst, m) {
-  m.def("init", &init, R"pbdoc(
-        Initialize transducer
-
-        Some other explanation about the analyse function.
-    )pbdoc");
-
-  m.def("analyse", &analyse, R"pbdoc(
-        Analyse a string
-
-        Some other explanation about the analyse function.
-    )pbdoc");
-
-  m.def("generate", &generate, R"pbdoc(
-        Generate a string
-
-        Some other explanation about the generate function.
-    )pbdoc");
-
-  m.def("delete", &delete_transducer, R"pbdoc(
-        Delete the transducer instance
-
-        Some other explanation about the generate function.
-    )pbdoc");
-
-#ifdef VERSION_INFO
-  m.attr("__version__") = MACRO_STRINGIFY(VERSION_INFO);
-#else
-  m.attr("__version__") = "dev";
-#endif
+PYBIND11_MODULE(sfst, m)
+{
+  py::class_<CustomCompactTransducer>(m, "CompactTransducer")
+    .def(py::init(&CustomCompactTransducer::create))
+    .def("analyse", &CustomCompactTransducer::analyse)
+    .def_readwrite("both_layers", &CustomCompactTransducer::both_layers)
+    .def_readwrite("simplest_only", &CustomCompactTransducer::simplest_only);
 }
