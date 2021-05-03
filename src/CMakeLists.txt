@@ -26,11 +26,11 @@ include_directories(/usr/local/include)
 
 # Source files
 set (LIB_SOURCES
-    basic.cpp utf8.cpp alphabet.cpp fst.cpp operators.cpp determinise.cpp hopcroft.cpp
+    basic.cpp compact.cpp utf8.cpp alphabet.cpp fst.cpp operators.cpp determinise.cpp hopcroft.cpp
 )
 
 set(HEADERS
-    alphabet.h basic.h fst.h interface.h mem.h utf8.h fst-compiler.h
+    alphabet.h basic.h compact.h fst.h interface.h mem.h utf8.h fst-compiler.h
 )
 
 # Add library
