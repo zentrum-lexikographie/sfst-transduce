@@ -1,9 +1,9 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
+#include <memory>
 #include <sstream>
 
-#include "../src/fst.h"
 #include "../src/compact.h"
 
 using namespace std;
