@@ -2,5 +2,8 @@ build/
 .vscode
 *.o
 *.so
-Makefile
+*.egg-info
+
 src/version.h
+
+.python-version
