@@ -4,17 +4,55 @@
 #include <memory>
 #include <sstream>
 
+#include "../src/fst.h"
 #include "../src/compact.h"
 
 using namespace std;
 using namespace SFST;
 
-class CustomCompactTransducer : public SFST::CompactTransducer
+class CustomTransducer : public SFST::Transducer
 {
   public:
-    CustomCompactTransducer(FILE* f);
-    static unique_ptr<CustomCompactTransducer> create(char* filename);
+    CustomTransducer(FILE* f);
+    static unique_ptr<CustomTransducer> create(char* filename);
     vector<string> analyse(char *input);
+    vector<string> generate(char *input);
+};
+
+CustomTransducer::CustomTransducer(FILE* f)
+  : SFST::Transducer(f)
+{
+}
+
+unique_ptr<CustomTransducer> CustomTransducer::create(char* filename)
+{
+    FILE* f = fopen(filename, "rb");
+    if (f != NULL)
+    {
+      auto transducer = unique_ptr<CustomTransducer>(new CustomTransducer(f));
+      fclose(f);
+      return transducer;
+    }
+    return unique_ptr<CustomTransducer>(nullptr);
+}
+
+vector<string> CustomTransducer::analyse(char *input)
+{
+  return analyze_string(input);
+}
+
+vector<string> CustomTransducer::generate(char *input)
+{
+  return generate_string(input, true);
+}
+
+class CustomCompactTransducer : public SFST::CompactTransducer
+{
+public:
+  CustomCompactTransducer(FILE* f);
+  static unique_ptr<CustomCompactTransducer> create(char* filename);
+  vector<string> analyse(char *input);
+  vector<string> generate(char *input);
 };
 
 CustomCompactTransducer::CustomCompactTransducer(FILE* f)
@@ -24,14 +62,14 @@ CustomCompactTransducer::CustomCompactTransducer(FILE* f)
 
 unique_ptr<CustomCompactTransducer> CustomCompactTransducer::create(char* filename)
 {
-    FILE* f = fopen(filename, "rb");
-    if (f != NULL)
+  FILE* f = fopen(filename, "rb");
+  if (f != NULL)
     {
       auto transducer = unique_ptr<CustomCompactTransducer>(new CustomCompactTransducer(f));
       fclose(f);
       return transducer;
     }
-    return unique_ptr<CustomCompactTransducer>(nullptr);
+  return unique_ptr<CustomCompactTransducer>(nullptr);
 }
 
 vector<string> CustomCompactTransducer::analyse(char *input)
@@ -52,7 +90,12 @@ namespace py = pybind11;
 
 PYBIND11_MODULE(sfst, m)
 {
-  py::class_<CustomCompactTransducer>(m, "CompactTransducer")
+  py::class_<CustomTransducer>(m, "Transducer")
+    .def(py::init(&CustomTransducer::create))
+    .def("analyse", &CustomTransducer::analyse)
+    .def("generate", &CustomTransducer::generate);
+
+   py::class_<CustomCompactTransducer>(m, "CompactTransducer")
     .def(py::init(&CustomCompactTransducer::create))
     .def("analyse", &CustomCompactTransducer::analyse)
     .def_readwrite("both_layers", &CustomCompactTransducer::both_layers)
