@@ -104,6 +104,7 @@ if(BISON_FOUND AND FLEX_FOUND)
 endif()
 
 install(TARGETS libsfst
+    LIBRARY DESTINATION lib
     RUNTIME DESTINATION lib)
 
 # Install the headers
