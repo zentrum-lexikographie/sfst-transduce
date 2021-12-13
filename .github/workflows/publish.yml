@@ -1,27 +1,57 @@
 name: Upload Python Package
 
 on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+     - master
   release:
     types:
       - published
 
 jobs:
-  deploy:
+  build_sdist:
     name: Build source distribution
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python
       uses: actions/setup-python@v2
     - name: Build sdist
       run: pipx run build --sdist
+    - uses: actions/upload-artifact@v2
+      with:
+        path: dist/*.tar.gz
+  build_wheel:
+    name: Build binary distribution
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
     - name: Build wheels
       uses: pypa/cibuildwheel@v2.3.0
+    - uses: actions/upload-artifact@v2
+      with:
+        path: wheelhouse/*.whl
+  deploy:
+    name: Upload to PyPI
+    if: github.event_name == 'release' && github.event.action == 'published'
+    needs: [build_sdist, build_wheel]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/setup-python@v2
+    - uses: actions/download-artifact@v2
+      with:
+        name: artifact
+        path: dist
     - name: Publish package
       uses: pypa/gh-action-pypi-publish@v1.4.2
       with:
