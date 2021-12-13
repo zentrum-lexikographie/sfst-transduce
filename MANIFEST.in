@@ -1,4 +1,4 @@
 include VERSION COPYING README.md CMakeLists.txt
 graft src
 graft python
-
+graft tests
