@@ -53,6 +53,13 @@ transducer.analyse('easier')
 rm -rf build ; pip install -e '.[dev]'
 ```
 
+## Release
+
+```bash
+scripts/release $NEW_VERSION
+git push && git push --tags
+```
+
 ## Credits
 
 The [SFST tools](https://www.cis.uni-muenchen.de/~schmid/tools/SFST/) have been
