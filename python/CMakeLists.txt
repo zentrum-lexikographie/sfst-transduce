@@ -13,9 +13,7 @@ set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 include(CPack)
 
-pybind11_add_module(sfst
-	sfst.cpp
-)
-target_compile_definitions(sfst PRIVATE VERSION_INFO=${VERSION_INFO})
+pybind11_add_module(sfst_transduce sfst_transduce.cpp)
 
-target_link_libraries(sfst PRIVATE libsfststatic)
+target_compile_definitions(sfst_transduce PRIVATE VERSION_INFO=${VERSION_INFO})
+target_link_libraries(sfst_transduce PRIVATE libsfststatic)

@@ -88,7 +88,7 @@ vector<string> CustomCompactTransducer::analyse(char *input)
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(sfst, m)
+PYBIND11_MODULE(sfst_transduce, m)
 {
   py::class_<CustomTransducer>(m, "Transducer")
     .def(py::init(&CustomTransducer::create))

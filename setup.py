@@ -28,6 +28,8 @@ class CMakeBuild(build_ext):
     def build_extension(self, ext):
         extdir = os.path.abspath(os.path.dirname(self.get_ext_fullpath(ext.name)))
 
+        print('!!!', extdir)
+
         # required for auto-detection of auxiliary "native" libs
         if not extdir.endswith(os.path.sep):
             extdir += os.path.sep
@@ -98,22 +100,25 @@ class CMakeBuild(build_ext):
             ["cmake", "--build", "."] + build_args, cwd=self.build_temp
         )
 
-version = open('VERSION').read().strip()
-long_description = open('python/README.md').read()
-# The information here can also be placed in setup.cfg - better separation of
-# logic and declaration, and simpler if you include description/version in a file.
 setup(
-    name="sfst",
-    version=version,
-    author="Santhosh Thottingal",
-    author_email="santhosh.thottingal@gmail.com",
-    description="Python binding for SFST",
-    long_description=long_description,
+    name="sfst-transduce",
+    version=open('VERSION').read().strip(),
+    author="Gregor Middell",
+    author_email="gregor@middell.net",
+    description="Python bindings for SFST focusing on transducer usage",
+    long_description=open('README.md').read(),
     long_description_content_type="text/markdown",
-    url="https://github.com/santhoshtr/sfst",
+    url="https://github.com/gremid/sfst-transduce",
     license="GPLv2",
-    ext_modules=[CMakeExtension("sfst")],
+    ext_modules=[CMakeExtension("sfst_transduce")],
     cmdclass={"build_ext": CMakeBuild},
     package_dir={"": "python"},
     zip_safe=False,
+    extras_require={
+        'dev': [
+            'pytest',
+            'autoflake',
+            'flake8'
+        ]
+    }
 )

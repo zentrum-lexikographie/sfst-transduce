@@ -7,3 +7,4 @@ build/
 src/version.h
 
 .python-version
+.dir-locals.el

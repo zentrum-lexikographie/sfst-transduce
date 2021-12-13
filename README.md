@@ -1,81 +1,71 @@
 
-# SFST - Stuttgart Finite State Transducer
+# sfst-transduce
 
+_Python bindings for SFST focusing on transducer usage_
 
-|      CI              | status |
-|----------------------|--------|
-| CMake builds           | [![CMake Actions Status][actions-cmake-badge]][actions-cmake-link] |
-| Pip builds           | [![Pip Actions Status][actions-pip-badge]][actions-pip-link] |
-| Wheels builds           | [![Wheels Actions Status][actions-wheels-badge]][actions-wheels-link] |
+A Python library providing bindings for the Stuttgart Finite State Transducer
+system with a focus on the usage of compiled and serialized transducers,
+excluding code for transducer development and testing, which reduces compile and
+runtime dependencies.
 
-[actions-cmake-link]:        https://github.com/santhoshtr/sfst/actions?query=workflow%3A%22CMake
-[actions-pip-link]:        https://github.com/santhoshtr/sfst/actions?query=workflow%3A%22Pip
-[actions-wheels-link]:        https://github.com/santhoshtr/sfst/actions?query=workflow%3A%22Wheels
-[actions-cmake-badge]:       https://github.com/santhoshtr/sfst/workflows/CMake/badge.svg
-[actions-pip-badge]:       https://github.com/santhoshtr/sfst/workflows/Pip/badge.svg
-[actions-wheels-badge]:       https://github.com/santhoshtr/sfst/workflows/Wheels/badge.svg
+Should you need the [SFST
+tools](https://www.cis.uni-muenchen.de/~schmid/tools/SFST/) for transducer
+generation, please take a look at their homepage for installation and usage
+instructions.
 
 ## Installation
 
-SFST can be compiled in Unix/Linux, Windows and Mac operating systems.
+`sfst-transduce` is available at
+[PyPI](https://pypi.org/project/sfst-transduce/):
 
-The SFST command line utilities has a few external requirements.
-
- 1. The "Flex" scanner generator which can be downloaded from: https://github.com/westes/flex. In linux systems they can be installed using package manager. For example, in Ubuntu, `apt install flex` installs it.
- 2. The "Bison" parser generator available from http://www.gnu.org/software/bison. In linux systems they can be installed using package manager. For example, in Ubuntu, `apt install bison` installs it.
-
-After unpacking the software package, in the top directory of source code,
-
-```
-mkdir build
-cd build
-cmake ..
-make
+```bash
+pip install sfst-transduce
 ```
 
-to compile the tools. Then call
+## Usage 
 
+```python
+import sfst_transduce
+
+# Create instance from compiled transducer
+transducer = sfst_transduce.Transducer('path/to/fst.a')
+
+# Analysis
+analysis_results = transducer.analyse("easier")
+# Returns ['easy<ADJ><comp>'] for example.
+
+# Generate a string. results are a list of analysis.
+generate_results = transducer.generate("easy<ADJ><comp>")
+# Returns ['easier'] for example.
+
+# Create instance from compiled transducer (compacted serialisation)
+transducer = sfst_transduce.CompactTransducer('path/to/fst.ca')
+# Activate output of aligned input and output layer
+transducer.both_layers = True
+# Analysis
+transducer.analyse('easier')
+# Returns ['easy:i<ADJ>:<><comp>:e<>:r'] for example.
 ```
-make install
+
+## Development
+
+```bash
+rm -rf build ; pip install -e '.[dev]'
 ```
 
-to install the tools in /usr/local/bin. Change the variable DESTDIR
-in Makefile if you want to install to a different directory.
-Finally call
+## Credits
 
-```
-make maninstall
-```
-
-to install the manpages in /usr/local/man/man1 and you are done.
-
-The subdirectory data contains a simple example of an English
-morphological analyser, the source code of the German SMOR morphology
-(with just a few sample lexicon entries), and the general morphology
-XMOR which may be used as a starting point for the development of a
-computational morphology.
-
-## Usage
-
-See the manual SFST-Manual.pdf in the doc subdirectory and the man
-pages for more information on the SFST tools. doc/SFST-Tutorial.pdf
-explains how computational morphologies are implemented in SFST.
-
-If you want to implement your own tools based on the SFST code, have a
-look at fst-infl.C and fst-infl2.C. They show how analysers are
-implemented with the standard (fst-infl) and the compact (fst-infl2)
-transducer format.
-
-## Author
-
-The SFST tools have been implemented by Helmut Schmid, Institute for
-Computational Linguistics, University of Stuttgart, Germany and they
-are available under the GNU public license version 2 or higher.
+The [SFST tools](https://www.cis.uni-muenchen.de/~schmid/tools/SFST/) have been
+implemented by Helmut Schmid, Institute for Computational Linguistics,
+University of Stuttgart, Germany and they are available under the GNU public
+license version 2 or higher.
 
 Please cite the following publication if you want to refer to the SFST tools:
 
-`A Programming Language for Finite State Transducers, Proceedings of the 5th International Workshop on Finite State Methods in Natural Language Processing (FSMNLP 2005), Helsinki, Finland.` [pdf](https://www.cis.uni-muenchen.de/~schmid/papers/SFST-PL.pdf)
+Schmid, Helmut. "A programming language for finite state transducers." FSMNLP.
+Vol. 4002. 2005.
+[pdf](https://www.cis.uni-muenchen.de/~schmid/papers/SFST-PL.pdf)
 
-## Bug reports
-
-Please send bug reports and other feedback to schmid@cis.lmu.de.
+This Python library is a fork of the excellent [SFST
+adaptation](https://github.com/santhoshtr/sfst) by Santhosh Thottingal, changing
+the focus of the Python part.
