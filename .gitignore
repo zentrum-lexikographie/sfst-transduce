@@ -4,5 +4,7 @@ build/
 *.so
 *.egg-info
 
+__pycache__
+
 .python-version
 .dir-locals.el
