@@ -1,4 +1,4 @@
-name: Upload Python Package
+name: Package
 
 on:
   workflow_dispatch:
@@ -16,47 +16,46 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
     - name: Build sdist
       run: pipx run build --sdist
+    - name: Check metadata
+      run: pipx run twine check dist/*
     - uses: actions/upload-artifact@v4
       with:
+        name: cibw-sdist
         path: dist/*.tar.gz
-  build_wheel:
-    name: Build binary distribution
+  build_wheels:
+    name: Build binary distribution on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        #os: [ubuntu-latest, windows-latest, macos-latest]
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, windows-latest, macos-13]
     steps:
     - uses: actions/checkout@v4
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
-    - name: Build wheels
       uses: pypa/cibuildwheel@v2.21.1
+      env:
+        CIBW_ARCHS_MACOS: auto universal2
     - uses: actions/upload-artifact@v4
       with:
+        name: cibw-wheels-${{ matrix.os }}
         path: wheelhouse/*.whl
   deploy:
     name: Upload to PyPI
     if: github.event_name == 'release' && github.event.action == 'published'
-    needs: [build_sdist, build_wheel]
+    needs: [build_sdist, build_wheels]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/setup-python@v5
-    - uses: actions/download-artifact@v4
       with:
-        name: artifact
+        python-version: "3.x"
+        - uses: actions/download-artifact@v4
+      with:
+        pattern: cibw-*
         path: dist
+        merge-multiple: true
     - name: Publish package
-      uses: pypa/gh-action-pypi-publish@v1.4.2
+      uses: pypa/gh-action-pypi-publish@release/v1
       with:
         user: __token__
         password: ${{ secrets.PYPI_API_TOKEN }}
