@@ -4,7 +4,5 @@ build/
 *.so
 *.egg-info
 
-src/version.h
-
 .python-version
 .dir-locals.el
