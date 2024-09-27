@@ -20,7 +20,7 @@ jobs:
       uses: actions/setup-python@v2
     - name: Build sdist
       run: pipx run build --sdist
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v4
       with:
         path: dist/*.tar.gz
   build_wheel:
