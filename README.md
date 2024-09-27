@@ -3,7 +3,11 @@
 
 _Python bindings for SFST focusing on transducer usage_
 
-[![PyPI](https://img.shields.io/pypi/v/sfst-transduce.svg "PyPI")](https://pypi.org/project/sfst-transduce/)
+![PyPI - Version](https://img.shields.io/pypi/v/sfst-transduce)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/sfst-transduce)
+![PyPI - Wheel](https://img.shields.io/pypi/wheel/sfst-transduce)
+![GitHub License](https://img.shields.io/github/license/gremid/sfst-transduce)
+
 
 A Python library providing bindings for the Stuttgart Finite State Transducer
 system with a focus on the usage of compiled and serialized transducers,
@@ -24,7 +28,7 @@ instructions.
 pip install sfst-transduce
 ```
 
-## Usage 
+## Usage
 
 ```python
 import sfst_transduce
@@ -52,7 +56,9 @@ transducer.analyse('easier')
 ## Development
 
 ```bash
-rm -rf build ; pip install -e '.[dev]'
+pip install -e .
+pip install -r requirements-dev.txt
+pre-commit install
 ```
 
 ## Release

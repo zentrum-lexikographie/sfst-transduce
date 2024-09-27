@@ -4,22 +4,15 @@ import pathlib
 import subprocess
 import sys
 
-project_dir = (pathlib.Path(__file__) / '..' / '..').resolve()
+project_dir = (pathlib.Path(__file__) / ".." / "..").resolve()
 
 version = sys.argv[1]
-(project_dir / 'VERSION').write_text(version)
+(project_dir / "VERSION").write_text(version + "\n")
 
+subprocess.check_call(["git", "add", "VERSION"], cwd=project_dir)
 subprocess.check_call(
-    ["git",  "add", "VERSION"],
-    cwd=project_dir
+    ["git", "commit", "-m", f"Updates VERSION: {version}"], cwd=project_dir
 )
-subprocess.check_call(
-    ["git",  "commit", "-m", f"Updates VERSION: {version}"],
-    cwd=project_dir
-)
-subprocess.check_call(
-    ["git",  "tag", version],
-    cwd=project_dir
-)
+subprocess.check_call(["git", "tag", version], cwd=project_dir)
 
-# manually push commit and tags 
+# manually push commit and tags

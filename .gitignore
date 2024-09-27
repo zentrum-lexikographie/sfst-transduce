@@ -8,3 +8,5 @@ __pycache__
 
 .python-version
 .dir-locals.el
+
+*.temp
