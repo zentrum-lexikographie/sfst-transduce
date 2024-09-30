@@ -1,9 +1,48 @@
 [build-system]
 requires = [
-    "setuptools>=42,<72.2.0",
+    "setuptools>=60,<72.2.0",
     "pybind11>=2.10.0"
 ]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "sfst-transduce"
+description = "Python bindings for SFST focusing on transducer usage"
+authors = [{name = "Gregor Middell", email = "gregor.middell@bbaw.de"}]
+keywords = [
+    "Finite-state Transducer",
+    "Morphological Analysis",
+    "Natural Language Processing",
+    "NLP",
+    "SFST",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
+    "Operating System :: MacOS",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: C++",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: Implementation",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    "Topic :: Education",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Text Processing :: Linguistic",
+]
+requires-python = ">=3.8"
+dynamic = ["dependencies", "version", "readme"]
+
+[project.urls]
+Homepage = "https://github.com/zentrum-lexikographie/sfst-transduce"
+Repository = "https://github.com/zentrum-lexikographie/sfst-transduce.git"
 
 [tool.cibuildwheel]
 test-requires = "pytest"
@@ -11,3 +50,13 @@ test-command = "pytest {project}/tests"
 
 [tool.isort]
 profile = "black"
+
+[tool.setuptools.dynamic]
+version = {file = ["VERSION"]}
+readme = {file = ["README.md"], content-type = "text/markdown"}
+
+[tool.setuptools]
+packages = ["sfst_transduce"]
+
+[tool.setuptools.package-data]
+sfst_transduce = ["py.typed", "sfst_transduce.pyi"]
