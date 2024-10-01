@@ -13,6 +13,6 @@ subprocess.check_call(["git", "add", "VERSION"], cwd=project_dir)
 subprocess.check_call(
     ["git", "commit", "-m", f"Updates VERSION: {version}"], cwd=project_dir
 )
-subprocess.check_call(["git", "tag", version], cwd=project_dir)
+subprocess.check_call(["git", "tag", f"v{version}"], cwd=project_dir)
 
 # manually push commit and tags
