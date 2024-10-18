@@ -9,6 +9,9 @@ class Transducer:
         pass
 
 class CompactTransducer:
+    both_layers: bool
+    simplest_only: bool
+
     def __init__(self, filename: str):
         pass
     def analyse(self, s: str) -> List[str]:
